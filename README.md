@@ -1,3 +1,4 @@
+![Toblerone](img/logo.png)
 # Toblerone
 
 Toblerone is a method for detecting internal exon (not first or last) deletions in RNA-seq data. It is currently in development, extending the methods described here for acute lymphoblastic leukemia (ALL) focal deletions in IKAROS family zinc finger 1 (IKZF1) : https://github.com/Oshlack/ALL-RNAseq-utility-paper
@@ -75,6 +76,10 @@ This pseudoalignment implementation is based on the 10X Genomics Pseudoaligner c
 ## App
 
 TBC
+
+![Toblerone App](img/screenshot_small.png)
+
+
 
 
 # Roadmap
