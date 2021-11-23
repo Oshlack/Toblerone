@@ -1,12 +1,12 @@
 # Toblerone
 
-Toblerone is a method for detecting internal exon (not first or last) deletions in RNA-seq data. It is currently in development, extending the methods described here: https://github.com/Oshlack/ALL-RNAseq-utility-paper
+Toblerone is a method for detecting internal exon (not first or last) deletions in RNA-seq data. It is currently in development, extending the methods described here for acute lymphoblastic leukemia (ALL) focal deletions in IKAROS family zinc finger 1 (IKZF1) : https://github.com/Oshlack/ALL-RNAseq-utility-paper
 
+Toblerone consists of two key concepts: a specialised transcriptome and a modified pseudoalignment algorithm
 
-## Strucuture
+A desktop app is also available for single sample analysis.
 
-
-### Pseudoaligner
+## Pseudoaligner
 
 The psuedaligner core is currently called `tinyt` and can be run in standalone mode form the command line, or is inclued in the Toblerone app (see below).
 
@@ -34,12 +34,36 @@ For a candidate gene, e.g. IKZF1, we take the the canonical transcript and gener
 
 #####  Generate transcripts
 
+For the gene(s) of interest, a canonical transcript should be provided which is the full length in order for the maximum number of exon deletions to be captured. Currently only `BED12` file format is accepted.   
+
+```
+python scripts/make_bedfiles.py input.BED12 temp_output_dir 
+```
+
+Merge all the egenreted BED files into one:
+
+```
+find temp_output_dir  -name "*.bed"  -type f -exec cat {} + > combined.BED12
+```
+
+The canonical transcripts corresponding to the `BED12` files  must also be provided, and then `bedtools` can be used to generate the `toblerone_transcriptome`:
+
+```
+bedtools getfasta -fi input_transcriptome -bed combined.BED12 -split -name > toblerone_transcriptome
+```
+
+The `toblerone_transcriptome` can now be indexed for further mapping.
 
 ##### Create index
 
+The `index` subcommand is run, using a convention of a `.tidx` for the `toblerone index` output.
 
+```
+tinyt index -i toblerone_transcriptome.tidx  toblerone_transcriptome 
+```
 
 #### Map
+
 
 
 #### Code & License
@@ -48,7 +72,7 @@ This pseudoalignment implementation is based on the 10X Genomics Pseudoaligner c
 
 
 
-### App
+## App
 
 TBC
 
@@ -56,6 +80,7 @@ TBC
 # Roadmap
 
 - [ ] Move transcriptome generation script into core 
+- [ ] Rebuild original `bpipe` pipeline for transcript creation
 
 # Acknowledgements 
 
