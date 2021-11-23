@@ -77,11 +77,20 @@ and `stdout` or a named output file will provide the per deletion trasncript inf
 Gene, Deletion,Count,Total, GeneLength, ReadLength, Scale Factor,Proportion,Scaled Proportion
 ```
 
+
+
 #### Code & License
 
 This pseudoalignment implementation is based on the 10X Genomics Pseudoaligner code (https://github.com/10XGenomics/rust-pseudoaligner/), which itself draws on the concepts from Kalisto(), Salmon() and others. It is released under the MIT license in line with the template source. It is heavily modified for a Toblerone index, and not intended for general transcriptomes.  
 
+## Install
 
+TODO
+
+### Source
+
+
+### Binary
 
 ## App
 
