@@ -30,6 +30,13 @@ Options:
 
 #### Index
 
+For a candidate gene, e.g. IKZF1, we take the the canonical transcript and generate a specialized transcriptome reference that consists of the original transcript plus deletion transcripts. Deletion transcripts consist of combinations of continuous exon deletion, excluding edge exons (first and last) exons. For N exons, (N-1 choose 2) additional deletion transcripts created.
+
+#####  Generate transcripts
+
+
+##### Create index
+
 
 
 #### Map
@@ -37,7 +44,7 @@ Options:
 
 #### Code & License
 
-This pseudoalignment implementation is based on the 10X Genomics Pseudoaligner code (https://github.com/10XGenomics/rust-pseudoaligner/), which itself draws on the concepts from Kalisto(), Salmon() and others. It is released under the MIT license in line with the tempalte source. It is heavily modified for a Toblerone index, and not intended for general transcriptomes.  
+This pseudoalignment implementation is based on the 10X Genomics Pseudoaligner code (https://github.com/10XGenomics/rust-pseudoaligner/), which itself draws on the concepts from Kalisto(), Salmon() and others. It is released under the MIT license in line with the template source. It is heavily modified for a Toblerone index, and not intended for general transcriptomes.  
 
 
 
@@ -46,7 +53,9 @@ This pseudoalignment implementation is based on the 10X Genomics Pseudoaligner c
 TBC
 
 
+# Roadmap
 
+- [ ] Move transcriptome generation script into core 
 
 # Acknowledgements 
 
