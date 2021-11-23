@@ -65,7 +65,17 @@ tinyt index -i toblerone_transcriptome.tidx  toblerone_transcriptome
 
 #### Map
 
+Reads can now be mapped and the counts, proportions and scaled proportions of deletions in a sample can now be calculated:
 
+```
+tinyt map  -i toblerone_transcriptome.tidx <reads>  
+```
+
+and `stdout` or a named output file will provide the per deletion trasncript information:
+
+```
+Gene, Deletion,Count,Total, GeneLength, ReadLength, Scale Factor,Proportion,Scaled Proportion
+```
 
 #### Code & License
 
