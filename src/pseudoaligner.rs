@@ -60,6 +60,7 @@ impl<K: Kmer + Sync + Send> Pseudoaligner<K> {
     }
 
     /// Pseudo-align `read_seq` and return a list of nodes that the read was aligned to, with mismatch = 2
+    /// Used in build_index where mismatches default can remain 2 for testing
     pub fn map_read_to_nodes(&self, read_seq: &DnaString, nodes: &mut Vec<usize>) -> Option<usize> {
       match self.map_read_to_nodes_with_mismatch(read_seq, nodes, DEFAULT_ALLOWED_MISMATCHES) {
         Some((read_coverage, _mismatches,_read_length)) => Some(read_coverage),
@@ -385,8 +386,8 @@ impl<K: Kmer + Sync + Send> Pseudoaligner<K> {
     /// Pseudoalign the `read_seq` to the graph with # mismatches = 2. Returns a tuple of the
     /// eqivalence class and the number of bases aligned on success, and number of mismatches
     /// or None is no alignment could be found.
-    pub fn map_read(&self, read_seq: &DnaString) -> Option<(Vec<u32>, usize, usize, usize)> {
-      match self.map_read_with_mismatch(read_seq, DEFAULT_ALLOWED_MISMATCHES) {
+    pub fn map_read(&self, read_seq: &DnaString, mismatch_size: usize) -> Option<(Vec<u32>, usize, usize, usize)> {
+      match self.map_read_with_mismatch(read_seq, mismatch_size) {
         Some((eq_class, read_coverage, mismatches, read_length)) => Some((eq_class, read_coverage,mismatches, read_length)),
         None => None,
       }
@@ -430,23 +431,23 @@ pub fn intersect<T: Eq + Ord>(v1: &mut Vec<T>, v2: &[T]) {
 
 
 // high level function to call match_read and check revcomp, select best match for unique ec if in doubtc
-pub fn match_strands<K: Kmer + Sync + Send>(record: &fastq::Record,  trim: bool,trimsize: usize, index: &Pseudoaligner<K>  ) -> Option<(Option<(bool,bool,String,Vec<u32>, usize,usize,bool,usize)>,String)> {
+pub fn match_strands<K: Kmer + Sync + Send>(record: &fastq::Record,  trim: bool,trimsize: usize,mismatchsize: usize, index: &Pseudoaligner<K>  ) -> Option<(Option<(bool,bool,String,Vec<u32>, usize,usize,bool,usize)>,String)> {
 
 
  // make next steps a function so can be called for R1 and R2  in a paired end version
                             let dna_string = str::from_utf8(&record.seq()).unwrap();
                             let seq = DnaString::from_dna_string(dna_string);
-                            let read_data = index.map_read(&seq);
+                            let read_data = index.map_read(&seq,mismatchsize);
                             // Some format: Hit to ec, unique ec, read, eq_class, coverage,mistmatches,mistmatches, trimmed
-                            let wrapped_read_data = match_read(read_data,&dna_string.to_owned(),&record.id().to_owned(),trim,trimsize,seq.len(),index);
+                            let wrapped_read_data = match_read(read_data,&dna_string.to_owned(),&record.id().to_owned(),trim,trimsize,mismatchsize,seq.len(),index);
 
 
                             let dna_string_revcomp =  bio::alphabets::dna::revcomp(record.seq());
                             let dna_string_revcomp = str::from_utf8(&dna_string_revcomp).unwrap();
                             let seq_revcomp = DnaString::from_dna_string(dna_string_revcomp);
 			//	info!("test slice {:?}",&dna_string_revcomp[1..40]);
-                            let read_data_revcomp = index.map_read(&seq_revcomp);
-                            let wrapped_read_data_revcomp = match_read(read_data_revcomp,&dna_string_revcomp.to_owned(),&record.id().to_owned(),trim,trimsize,seq.len(),index);
+                            let read_data_revcomp = index.map_read(&seq_revcomp,mismatchsize);
+                            let wrapped_read_data_revcomp = match_read(read_data_revcomp,&dna_string_revcomp.to_owned(),&record.id().to_owned(),trim,trimsize,mismatchsize,seq.len(),index);
 
 			    // return one of the two reads, with origin
    			let return_result = match (&wrapped_read_data, &wrapped_read_data_revcomp) {
@@ -510,7 +511,7 @@ pub fn match_strands<K: Kmer + Sync + Send>(record: &fastq::Record,  trim: bool,
 
 
 // function to match read to result
-pub fn match_read<K: Kmer + Sync + Send>(optional: Option<(Vec<u32>, usize, usize,usize)>, seq: &String,  record_id: &String,  trim: bool, trimsize: usize, seqlength: usize, index: &Pseudoaligner<K>  ) -> Option<(bool,bool,String,Vec<u32>, usize,usize,bool,usize)> {
+pub fn match_read<K: Kmer + Sync + Send>(optional: Option<(Vec<u32>, usize, usize,usize)>, seq: &String,  record_id: &String,  trim: bool, trimsize: usize, mismatchsize: usize,seqlength: usize, index: &Pseudoaligner<K>  ) -> Option<(bool,bool,String,Vec<u32>, usize,usize,bool,usize)> {
 
         // Some format: Hit to ec, unique ec, read, eq_class, coverage, mismatches,trimmed 
 
@@ -527,7 +528,7 @@ pub fn match_read<K: Kmer + Sync + Send>(optional: Option<(Vec<u32>, usize, usiz
                                         //println!("{:?}",seq);
                                         debug!("{:?}",&seq[trimsize..trim_end]);
                                         let trim_seq = DnaString::from_dna_string(&seq[trimsize..trim_end]);
-                                        let trim_read_data = index.map_read(&trim_seq);
+                                        let trim_read_data = index.map_read(&trim_seq,mismatchsize);
 					//debug!("{} length {} trimlength {}",record_id,seqlength, trim_seq.len()); 
 
                                         let wrapped_trim_read_data = match trim_read_data {
@@ -549,9 +550,9 @@ pub fn match_read<K: Kmer + Sync + Send>(optional: Option<(Vec<u32>, usize, usiz
                                         }
                                         // trim these also? to be consistent, yes, indicates different
                                         None =>  {
-					debug!("orig {:?}",index.map_read(&DnaString::from_dna_string(&seq)));
-					debug!(" trimsize... {:?}",index.map_read(&DnaString::from_dna_string(&seq[trimsize..])));
-					debug!(" ...trim_end {:?}",index.map_read(&DnaString::from_dna_string(&seq[..trim_end])));
+					debug!("orig {:?}",index.map_read(&DnaString::from_dna_string(&seq)),mismatchsize);
+					debug!(" trimsize... {:?}",index.map_read(&DnaString::from_dna_string(&seq[trimsize..])),mismatchsize);
+					debug!(" ...trim_end {:?}",index.map_read(&DnaString::from_dna_string(&seq[..trim_end])),mismatchsize);
 					debug!("coded trim {:?}",trim_read_data);
 					debug!(" {} none trimed {:?}  returns None", record_id.to_owned(),eq_class); 
 					debug!("orig {:?} trimmed {:?}",&DnaString::from_dna_string(&seq),&DnaString::from_dna_string(&seq[trimsize..trim_end])); 
@@ -602,6 +603,7 @@ pub fn process_reads<K: Kmer + Sync + Send>(
     num_threads: usize,
     trim: bool,
     trimsize: usize,
+    mismatchsize: usize,
     read_length: Option<usize>,
 ) -> Result<(), Error> {
     info!("Done Reading index");
@@ -685,8 +687,8 @@ info!("Spawning {} threads for Mapping.\n", num_threads);
 					}
 
 
-                            let compared_read_data = match_strands(&record,trim,trimsize,index);
-                            let compared_read_data_R2 = match_strands(&recordR2,trim,trimsize,index);
+                            let compared_read_data = match_strands(&record,trim,trimsize,mismatchsize,index);
+                            let compared_read_data_R2 = match_strands(&recordR2,trim,trimsize,mismatchsize,index);
 			
 				// compare EC class result from each read pair, return the best one for unique EC
 				//Option<(Option<(bool,bool,String,Vec<u32>, usize,usize,bool)>,String)>
@@ -811,7 +813,7 @@ info!("Spawning {} threads for Mapping.\n", num_threads);
                                 //match_strands
 
 
-                            let compared_read_data = match_strands(&record,trim,trimsize,index);
+                            let compared_read_data = match_strands(&record,trim,trimsize,mismatchsize,index);
 
                             tx.send(compared_read_data).expect("Could not send data!");
                         }

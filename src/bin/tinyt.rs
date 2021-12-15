@@ -32,8 +32,9 @@ Usage:
 
 Options:
   -n --num-threads N  Number of worker threads [default: 2]
-  -t --trim-size T    Size of base pairs to trim when checking unique read matches [default: 2] 
+  -t --trim-size T    Size of base pairs to trim when checking unique read matches [default: 5] 
   -s --skip-trim      Skip the trim read check for unqiue read matches
+  -m --mismatch M     Number of allowed mismatches for per read [default: 2]
   -r --read-length R  Provide read length for depth estimation
   -o --output FILE    Output results to file instead of stdout
   -h --help           Show this screen.
@@ -53,6 +54,7 @@ struct Args {
 
     cmd_map: bool,
     flag_trim_size: usize,
+    flag_mismatch: usize,
     flag_skip_trim: bool,
     flag_read_length: Option<usize>,
 
@@ -90,6 +92,9 @@ fn main() -> Result<(), Error> {
        args.flag_skip_trim = true; 
     }
 
+if args.flag_trim_size <= args.flag_mismatch, {
+        warn! {"--trim-size less than or equal to mismatch may be ineffective"};
+    }
 
     debug!("Command line args:\n{:?}", args);
 
@@ -160,11 +165,11 @@ fn main() -> Result<(), Error> {
         let reads = fastq::Reader::from_file(args.arg_reads_fastq)?;
     if args.arg_reads_pair_fastq == ""  {
         info!("Single end reads provided");
-        process_reads::<config::KmerType>(reads,None, &index, args.flag_output, args.flag_num_threads,!args.flag_skip_trim,args.flag_trim_size,args.flag_read_length)?;
+        process_reads::<config::KmerType>(reads,None, &index, args.flag_output, args.flag_num_threads,!args.flag_skip_trim,args.flag_trim_size,args.flag_mismatch,args.flag_read_length)?;
     } else {
         info!("Paired end reads provided");
         let reads_pair = fastq::Reader::from_file(args.arg_reads_pair_fastq)?;
-        process_reads::<config::KmerType>(reads,Some(reads_pair), &index, args.flag_output, args.flag_num_threads,!args.flag_skip_trim,args.flag_trim_size,args.flag_read_length)?;
+        process_reads::<config::KmerType>(reads,Some(reads_pair), &index, args.flag_output, args.flag_num_threads,!args.flag_skip_trim,args.flag_trim_size,args.flag_mismatch,args.flag_read_length)?;
     }
 
 
