@@ -92,7 +92,7 @@ fn main() -> Result<(), Error> {
        args.flag_skip_trim = true; 
     }
 
-if args.flag_trim_size <= args.flag_mismatch, {
+if args.flag_trim_size <= args.flag_mismatch {
         warn! {"--trim-size less than or equal to mismatch may be ineffective"};
     }
 
