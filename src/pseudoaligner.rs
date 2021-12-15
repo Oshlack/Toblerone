@@ -550,9 +550,9 @@ pub fn match_read<K: Kmer + Sync + Send>(optional: Option<(Vec<u32>, usize, usiz
                                         }
                                         // trim these also? to be consistent, yes, indicates different
                                         None =>  {
-					debug!("orig {:?}",index.map_read(&DnaString::from_dna_string(&seq)),mismatchsize);
-					debug!(" trimsize... {:?}",index.map_read(&DnaString::from_dna_string(&seq[trimsize..])),mismatchsize);
-					debug!(" ...trim_end {:?}",index.map_read(&DnaString::from_dna_string(&seq[..trim_end])),mismatchsize);
+					debug!("orig {:?}",index.map_read(&DnaString::from_dna_string(&seq),mismatchsize));
+					debug!(" trimsize... {:?}",index.map_read(&DnaString::from_dna_string(&seq[trimsize..]),mismatchsize));
+					debug!(" ...trim_end {:?}",index.map_read(&DnaString::from_dna_string(&seq[..trim_end]),mismatchsize));
 					debug!("coded trim {:?}",trim_read_data);
 					debug!(" {} none trimed {:?}  returns None", record_id.to_owned(),eq_class); 
 					debug!("orig {:?} trimmed {:?}",&DnaString::from_dna_string(&seq),&DnaString::from_dna_string(&seq[trimsize..trim_end])); 
