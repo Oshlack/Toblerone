@@ -15,7 +15,7 @@ use debruijn::filter::*;
 use debruijn::graph::*;
 use debruijn::*;
 
-use crate::config::{MIN_KMERS, U32_MAX};
+use crate::config::{MIN_KMERS, U32_MAX,DEFAULT_ALLOWED_MISMATCHES};
 use crate::equiv_classes::{CountFilterEqClass, EqClassIdType};
 use crate::pseudoaligner::Pseudoaligner;
 use boomphf;
@@ -144,7 +144,7 @@ pub fn validate_dbg<K: Kmer + Sync + Send>(seqs: &[DnaString], al: &Pseudoaligne
             continue;
         }
 
-        let (eqclass, bases_aligned,mismatches, _readlen) = al.map_read(s).unwrap();
+        let (eqclass, bases_aligned,mismatches, _readlen) = al.map_read(s,DEFAULT_ALLOWED_MISMATCHES).unwrap();
         assert_eq!(s.len(), bases_aligned);
 
         if eqclass.len() > 1 {
@@ -166,7 +166,6 @@ pub fn validate_dbg<K: Kmer + Sync + Send>(seqs: &[DnaString], al: &Pseudoaligne
 
             if s.len() != shortest {
                 let mut path_buf: Vec<usize> = Vec::new();
-
                 use std::iter::FromIterator;
                 al.map_read_to_nodes(s, &mut path_buf).unwrap();
                 let my_nodes: HashSet<usize> = HashSet::from_iter(path_buf.iter().cloned());
