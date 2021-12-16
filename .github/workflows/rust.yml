@@ -18,7 +18,7 @@ jobs:
           override: true
 
       - name: Build
-        run: cargo build --all --release && strip target/release/tinyt && mv target/release/tinyt target/release/tinyt_amd64
+        run: cargo build --all --release && strip target/release/tinyt && mv target/release/tinyt target/release/tinyt_amd64 && chmod +x target/release/tinyt_amd64
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -70,13 +70,13 @@ jobs:
           override: true
 
       - name: Build for mac
-        run: cargo build --all --release && strip target/release/tinyt && mv target/release/tinyt target/release/tinyt_darwin
+        run: cargo build --all --release && strip target/release/tinyt && mv target/release/tinyt target/release/tinyt_macos && chmod +x target/release/tinyt_macos
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            target/release/tinyt_darwin
+            target/release/tinyt_macos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
