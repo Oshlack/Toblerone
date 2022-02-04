@@ -27,7 +27,7 @@ tinyt
 
 Usage:
   tinyt index [--num-threads=<n>] -i <index> <ref-fasta>
-  tinyt map [--num-threads=<n>] [--read-length=<r>] [--trim-size=<t>] [--skip-trim] [-m --mismatch=<m>] [--output=<file>] -i <index> <reads-fastq> [<reads-pair-fastq>]
+  tinyt map [--num-threads=<n>] [--read-length=<r>] [--trim-size=<t>] [--skip-trim] [--mismatch=<m>] [--output=<file>] -i <index> <reads-fastq> [<reads-pair-fastq>]
   tinyt -h | --help | -v | --version
 
 Options:
