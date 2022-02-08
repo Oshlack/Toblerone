@@ -947,7 +947,7 @@ info!("Spawning {} threads for Mapping.\n", num_threads);
 
 }
      // can add in the tx_gene map entry, and gene length entry here
-    writeln!(output_file,"Gene, Deletion,Count,Total, GeneLength, ReadLength, Scale Factor,Proportion,Scaled Proportion");
+    writeln!(output_file,"Gene,Deletion,Count,Total,GeneLength,ReadLength,ScaleFactor,Proportion,ScaledProportion");
         //for (key, value) in &frequency.keys().sorted() {
         for key in &frequency.keys().sorted() {
 	let value = &frequency[&key as &str];
