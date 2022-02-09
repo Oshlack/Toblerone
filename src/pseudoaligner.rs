@@ -958,7 +958,7 @@ info!("Spawning {} threads for Mapping.\n", num_threads);
 		let scaleprop = prop / scalefactor;
 
 
-            writeln!(output_file,"{} ,  {} , {},  {}, {}, {}, {}, {}, {}",gene_id, key, value,mapped_read_counter , gene_length,average_read_length,scalefactor,prop, scaleprop);
+            writeln!(output_file,"{},{},{},{},{},{},{},{},{}",gene_id, key, value,mapped_read_counter , gene_length,average_read_length,scalefactor,prop, scaleprop);
         }
 
         //println!("gene map {:?}",&index.tx_gene_mapping);
