@@ -936,7 +936,8 @@ info!("Spawning {} threads for Mapping.\n", num_threads);
 		//manipulate the hash - fill missing entries with 0 from index
 
 			for trans in &index.tx_names {
-			if trans.contains("_"){
+			if trans.contains("del"){
+			//if trans.contains("_")// future use a more universal symbol, needs to work with single cases: del2
 
 			if !frequency.contains_key(&trans as &str) {
 			//println!(" {} is missing", trans);
