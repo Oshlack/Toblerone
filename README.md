@@ -1,11 +1,15 @@
 ![Toblerone](img/logo.png)
 # Toblerone
 
-Toblerone is a method for detecting internal exon (not first or last) deletions in RNA-seq data. It is currently in development, extending the methods described here for acute lymphoblastic leukemia (ALL) focal deletions in IKAROS family zinc finger 1 (IKZF1) : https://github.com/Oshlack/ALL-RNAseq-utility-paper
+Toblerone is a method for detecting exon deltions in RNA-seq data. You'll notice in the logo that an e(xon) is missing!
+
+It is currently in development, extending the methods described here for acute lymphoblastic leukemia (ALL) focal deletions in IKAROS family zinc finger 1 (IKZF1) : https://github.com/Oshlack/ALL-RNAseq-utility-paper.  Toblerone looks for internal exon (not first or last) deletions. 
 
 Toblerone consists of two key concepts: a specialised transcriptome and a modified pseudoalignment algorithm
 
 A desktop app is also available for single sample analysis.
+
+
 
 ## Pseudoaligner
 
@@ -32,6 +36,15 @@ Options:
 #### Index
 
 For a candidate gene, e.g. IKZF1, we take the the canonical transcript and generate a specialized transcriptome reference that consists of the original transcript plus deletion transcripts. Deletion transcripts consist of combinations of continuous exon deletion, excluding edge exons (first and last) exons. For N exons, (N-1 choose 2) additional deletion transcripts created.
+
+
+```mermaid
+  graph TD;
+    A[\input gene defintion/]-->B;   
+    B[generate deletion definitions]-->D;
+       C[\input transcriptome/]-->D[create deletion transcripts];
+       D-->E[index];
+```
 
 #####  Generate transcripts
 
@@ -66,6 +79,16 @@ tinyt index -i toblerone_transcriptome.tidx  toblerone_transcriptome
 #### Map
 
 Reads can now be mapped and the counts, proportions and scaled proportions of deletions in a sample can now be calculated:
+
+
+```mermaid
+  graph TD;
+    A[\toblerone_transcriptome/]-->C;   
+       B[\input RNA-seq reads/]-->C[tinyt map];
+       C-->E[Deletion summary csv];
+```
+
+
 
 ```
 tinyt map  -i toblerone_transcriptome.tidx <reads>  
