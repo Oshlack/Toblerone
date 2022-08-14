@@ -517,7 +517,7 @@ pub fn match_read<K: Kmer + Sync + Send>(optional: Option<(Vec<u32>, usize, usiz
 
 	match optional {
         	Some((eq_class,coverage,mismatches,readlen)) => {
-                                    if coverage >= seq.len() && mismatches == 0 &&  eq_class.len() == 1 {
+                                    if coverage >= seq.len() && mismatches <= mismatchsize &&  eq_class.len() == 1 {
                                     //if coverage >= READ_COVERAGE_THRESHOLD && eq_class.len() == 1 {
                                         debug!("{:?}",&seq);
                                       if trim { // trim check
