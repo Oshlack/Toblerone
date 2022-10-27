@@ -42,7 +42,7 @@ For a candidate gene, e.g. IKZF1, we take the the canonical transcript and gener
   graph TD;
     A[\input gene defintion/]-->B;   
     B[generate deletion definitions]-->D;
-       C[\input transcriptome/]-->D[create deletion transcripts];
+       C[\input genome/]-->D[create deletion transcripts];
        D-->E[index];
 ```
 
@@ -54,7 +54,7 @@ For the gene(s) of interest, a canonical transcript should be provided which is 
 python scripts/make_bedfiles.py input.BED12 temp_output_dir 
 ```
 
-Merge all the egenreted BED files into one:
+Merge all the generated BED files into one:
 
 ```
 find temp_output_dir  -name "*.bed"  -type f -exec cat {} + > combined.BED12
@@ -63,7 +63,7 @@ find temp_output_dir  -name "*.bed"  -type f -exec cat {} + > combined.BED12
 The canonical transcripts corresponding to the `BED12` files  must also be provided, and then `bedtools` can be used to generate the `toblerone_transcriptome`:
 
 ```
-bedtools getfasta -fi input_transcriptome -bed combined.BED12 -split -name > toblerone_transcriptome
+bedtools getfasta -fi input_genome -bed combined.BED12 -split -name > toblerone_transcriptome
 ```
 
 The `toblerone_transcriptome` can now be indexed for further mapping.
@@ -75,6 +75,8 @@ The `index` subcommand is run, using a convention of a `.tidx` for the `tobleron
 ```
 tinyt index -i toblerone_transcriptome.tidx  toblerone_transcriptome 
 ```
+
+The extension `.tidx` is a convention meant to indicate 'toblerone index', but any filename can be used. 
 
 #### Map
 
