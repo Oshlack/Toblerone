@@ -1,6 +1,6 @@
 [package]
 name = "tinyt"
-version = "0.0.6"
+version = "0.0.9"
 authors = ["Andrew Lonsdale <andrew.lonsdale@lonsbio.com.au>"]
 edition = "2018"
 
